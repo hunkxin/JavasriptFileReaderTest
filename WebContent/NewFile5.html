@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>File(s) size</title>
+<script>
+function updateSize() {
+	var fileSelect = document.getElementById("fileSelect"),
+	fileElem = document.getElementById("uploadInput");
+
+	fileSelect.addEventListener("click", function (e) {
+	if (fileElem) {
+	  fileElem.click();
+	}
+	e.preventDefault(); // prevent navigation to "#"
+	}, false);
+	
+	initdrop();
+	
+	//handleFiles(document.getElementById("uploadInput").files);
+}
+
+/*function handleFiles(files){
+	var nBytes = 0,
+    oFiles = files,
+    nFiles = oFiles.length;
+	for (var nFileId = 0; nFileId < nFiles; nFileId++) {
+  		nBytes += oFiles[nFileId].size;
+	}
+	var sOutput = nBytes + " bytes";
+	var aMultiples = ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"], 
+	    nMultiple = 0, nApprox = nBytes / 1024;
+
+	// optional code for multiples approximation
+	for ( ; nApprox > 1; nApprox /= 1024, nMultiple++) {
+	  sOutput = nApprox.toFixed(3) + " " + aMultiples[nMultiple] + " (" + nBytes + " bytes)";
+	}
+	// end of optional code
+	document.getElementById("fileNum").innerHTML = nFiles;
+	document.getElementById("fileSize").innerHTML = sOutput;
+}*/
+
+function initdrop(){
+	var dropbox;
+
+	dropbox = document.getElementById("dropbox");
+	dropbox.addEventListener("dragenter", dragenter, false);
+	dropbox.addEventListener("dragover", dragover, false);
+	dropbox.addEventListener("drop", drop, false);
+}
+
+function dragenter(e) {
+	e.stopPropagation();
+	e.preventDefault();
+}
+
+function dragover(e) {
+	e.stopPropagation();
+	e.preventDefault();
+}
+	
+function drop(e) {
+	e.stopPropagation();
+	e.preventDefault();
+
+	var dt = e.dataTransfer;
+	var files = dt.files;
+
+	handleFiles(files);
+}
+
+function handleFiles(files) {
+	  for (var i = 0; i < files.length; i++) {
+	    var file = files[i];
+	    var videoType = /^video\//;
+	    
+	    if ( !videoType.test(file.type) ) {
+	      	continue;
+	    }
+	    
+	    //var video = document.createElement("video");
+	    var video = document.getElementById("video");
+	    video.classList.add("obj");
+	    video.id="video";
+	    video.file=file;
+	    
+	    //video.height=100;
+	    //var sc = document.createElement("source");
+	    //var obj_url = window.URL.createObjectURL(file);
+	    //sc.src = obj_url;
+	    //sc.type="video/mp4";
+	    //video.appendChild(sc);
+	    
+	    /*video.onload = function(e) {
+	        window.URL.revokeObjectURL(obj_url);
+	      }*/
+	    
+	    // 假设 "preview" 是将要展示图片的 div
+	    //preview = document.getElementById("preview");
+	    //preview.appendChild(video);
+	    //video.src = obj_url;
+	    //video.play();
+	    //window.URL.revokeObjectURL(obj_url);
+	    
+	    var reader = new FileReader();
+	    //alert(file.size);
+	    reader.onload = (function(aVdo) { 
+	      return function(e) { 
+	    	  //alert("ccc");
+	    	  aVdo.src = e.target.result; 
+	    	  aVdo.play();
+		    //window.URL.revokeObjectURL(obj_url);
+	      }; 
+	    })(video);
+	    reader.readAsDataURL(file);
+	    //reader.readAsBinaryString(file);
+	  }
+}
+
+function playPause()
+{ 
+	video = document.getElementById("video");
+	if(video!=null){
+		if (video.paused) 
+			video.play(); 
+		else 
+			video.pause();
+		//return false;
+	}
+	else
+		alert("no video!");
+	//return false;
+} 
+
+</script>
+</head>
+
+<body onload="updateSize();">
+<form name="uploadForm">
+<p>
+  <input id="uploadInput" type="file" name="myFiles" onchange="handleFiles(this.files)" multiple accept="image/*" style="display:none">
+    selected files： 
+    <span id="fileNum">0</span>; total size： 
+    <span id="fileSize">0</span>
+    <br>
+    <a href="#" id="fileSelect">Select some files</a>
+</p>
+<p>
+  <input type="submit" value="Send file">
+</p>
+<div id="dropbox" style="width:800px; height:500px; border:1px solid; float:left"></div>
+<div id="preview" style="width:200px; height:300px; border:1px solid; float:left">
+	<video id="video"></video>
+</div>
+<div id="ctl" style="float:left">
+	<button onclick="playPause()">播放/暂停</button>
+</div>
+</form>
+</body>
+</html>

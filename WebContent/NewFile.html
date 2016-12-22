@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">  
+	function showPreview(source) {  
+	    var file = source.files[0];  
+	    if(window.FileReader) {  
+	        var fr = new FileReader();  
+	        fr.onloadend = function(e) {  
+	            document.getElementById("portrait").src = e.target.result;  
+	        };  
+	        fr.readAsDataURL(file);  
+	    }  
+	}  
+</script>
+<script src="js/FileReaderTest1.js"></script>
+</head>
+<body>
+	<input type="file" name="file" onchange="showPreview(this)" />  
+    <img id="portrait" src="" width="70" height="75">
+    <form>  
+    	<fieldset>  
+        	<legend>分度读取文件：</legend>  
+            <input type="file" id="File" />  
+            <input type="button" value="中断" id="Abort" />  
+            <p>  
+                <label>读取进度：</label><progress id="Progress" value="0" max="100"></progress>  
+            </p>  
+            <p id="Status"></p>  
+        </fieldset>  
+    </form>  
+</body>
+</html>
